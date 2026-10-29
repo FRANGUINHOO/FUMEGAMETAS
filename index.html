@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FumegaMetas</title>
+    <title>FumegaMetas - Foco em Estudos</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,80 +12,99 @@
     <div class="container">
         <header>
             <h1>FUMEGAMETAS</h1>
-            <p class="subtitle">Acompanhamento em Tempo Real</p>
+            <p class="subtitle">Acompanhamento e Foco em Estudos</p>
         </header>
 
+        <!-- Formulário de Criação -->
         <section class="card form-card">
-            <h2>Criar Nova Meta</h2>
+            <h2>Novo Bloco de Estudos</h2>
             <form id="goalForm">
                 <div class="form-row">
                     <div class="input-group flex-2">
-                        <label for="title">Título da Meta</label>
-                        <input type="text" id="title" placeholder="Ex: Estudar para a prova" required>
+                        <label for="title">O que você vai estudar?</label>
+                        <input type="text" id="title" placeholder="Ex: Resolver exercícios de Física" required>
                     </div>
 
                     <div class="input-group flex-1">
-                        <label for="category">Categoria</label>
-                        <select id="category">
-                            <option value="Trabalho">Trabalho</option>
-                            <option value="Estudos">Estudos</option>
-                            <option value="Saúde">Saúde</option>
-                            <option value="Pessoal">Pessoal</option>
+                        <label for="subject">Matéria</label>
+                        <select id="subject">
+                            <option value="Matemática">Matemática</option>
+                            <option value="Português">Português</option>
+                            <option value="História">História</option>
+                            <option value="Geografia">Geografia</option>
+                            <option value="Física">Física</option>
+                            <option value="Química">Química</option>
+                            <option value="Biologia">Biologia</option>
+                            <option value="Inglês">Inglês</option>
+                            <option value="Programação">Programação</option>
+                            <option value="Outros">Outros</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- Atalho de Tempo Rápido -->
+                <!-- Tempo Rápido -->
                 <div class="input-group">
-                    <label>Tempo Rápido (ou escolha a hora exata abaixo):</label>
+                    <label>Tempo de Foco (Clique para selecionar rápido):</label>
                     <div class="quick-buttons">
-                        <button type="button" class="btn-quick" onclick="setQuickMinutes(15)">+15 min</button>
-                        <button type="button" class="btn-quick" onclick="setQuickMinutes(30)">+30 min</button>
-                        <button type="button" class="btn-quick" onclick="setQuickMinutes(60)">+1 Hora</button>
-                        <button type="button" class="btn-quick" onclick="setQuickMinutes(120)">+2 Horas</button>
+                        <button type="button" class="btn-quick" onclick="setQuickMinutes(15)">15 Minutos</button>
+                        <button type="button" class="btn-quick" onclick="setQuickMinutes(25)">25 Min (Pomodoro)</button>
+                        <button type="button" class="btn-quick" onclick="setQuickMinutes(45)">45 Minutos</button>
+                        <button type="button" class="btn-quick" onclick="setQuickMinutes(60)">1 Hora</button>
                     </div>
                 </div>
 
-                <!-- Campos Separados de Data e Hora -->
-                <div class="form-row">
-                    <div class="input-group flex-1">
-                        <label for="targetDate">Data do Prazo</label>
-                        <input type="date" id="targetDate" required>
-                    </div>
-
-                    <div class="input-group flex-1">
-                        <label for="targetHour">Hora do Prazo</label>
-                        <input type="time" id="targetHour" step="1" required>
-                    </div>
+                <!-- Hora Final do Estudo -->
+                <div class="input-group">
+                    <label for="targetTimeOnly">Horário de Término (Defina a hora exata se preferir):</label>
+                    <input type="time" id="targetTimeOnly" step="1" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Adicionar Meta</button>
+                <button type="submit" class="btn btn-primary">Iniciar Sessão de Estudos</button>
             </form>
         </section>
 
+        <!-- Lista de Tarefas / Cronômetros -->
         <section class="card list-card">
             <div class="list-header">
-                <h2>Minhas Metas</h2>
+                <h2>Sessões Ativas</h2>
                 <div class="stats-bar">
-                    <span id="statActive">Ativas: 0</span>
-                    <span id="statExpired">Esgotadas: 0</span>
+                    <span id="statActive">Em Foco: 0</span>
+                    <span id="statCompleted">Concluídas: 0</span>
                 </div>
             </div>
             
             <div id="goalsList" class="goals-container">
-                <p class="empty-msg">Nenhuma meta cadastrada no momento.</p>
+                <p class="empty-msg">Nenhuma sessão de estudo ativa no momento.</p>
+            </div>
+        </section>
+
+        <!-- Ferramenta Interativa: Bloco de Anotações Rápido -->
+        <section class="card notes-card">
+            <h2>Anotações Rápidas e Dúvidas</h2>
+            <div class="input-group">
+                <textarea id="quickNotes" placeholder="Escreva aqui fórmulas, resumos ou dúvidas durante o estudo... (Salvo automaticamente)"></textarea>
+            </div>
+            <div class="notes-actions">
+                <span id="notesStatus">Salvo automaticamente</span>
+                <button class="btn btn-danger btn-small" onclick="clearNotes()">Limpar Notas</button>
             </div>
         </section>
     </div>
 
-    <!-- Modal para Exibição em Tela Cheia -->
+    <!-- Modal de Tela Cheia com Modo Foco Total -->
     <div id="fullscreenModal" class="fullscreen-modal">
         <div class="fullscreen-content">
-            <button class="close-modal-btn" onclick="closeFullscreen()">FECHAR [X]</button>
-            <h2 id="fullscreenTitle">TÍTULO DA META</h2>
-            <span id="fullscreenCategory" class="badge">CATEGORIA</span>
+            <button class="close-modal-btn" onclick="closeFullscreen()">SAIR DA TELA CHEIA [X]</button>
+            
+            <span id="fullscreenSubject" class="badge">MATÉRIA</span>
+            <h2 id="fullscreenTitle">TÍTULO DA TAREFA</h2>
+            
             <div id="fullscreenTimer" class="fullscreen-timer">00:00:00</div>
-            <p id="fullscreenStatus" class="fullscreen-status">EM ANDAMENTO</p>
+            
+            <p id="fullscreenStatus" class="fullscreen-status">MODO FOCO ATIVO</p>
+            
+            <!-- Frases de incentivo aleatórias -->
+            <p id="quoteBox" class="quote-text">Mantenha a concentração no seu objetivo.</p>
         </div>
     </div>
 

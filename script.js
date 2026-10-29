@@ -1,26 +1,47 @@
-let goals = JSON.parse(localStorage.getItem('goals_db')) || [];
+let goals = JSON.parse(localStorage.getItem('study_goals_db')) || [];
 let audioCtx = null;
 let activeFullscreenId = null;
 
+const motivationalQuotes = [
+    "Mantenha a concentração. Cada minuto conta.",
+    "O foco de hoje é a conquista de amanhã.",
+    "Sem distrações. O seu objetivo é maior.",
+    "Persistência e disciplina geram resultados excelentes.",
+    "Respire fundo e continue avançando."
+];
+
 document.addEventListener('DOMContentLoaded', () => {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('targetDate').value = today;
+    // Carrega anotações salvas
+    const savedNotes = localStorage.getItem('study_notes') || '';
+    document.getElementById('quickNotes').value = savedNotes;
+
+    // Salva anotações automaticamente ao digitar
+    document.getElementById('quickNotes').addEventListener('input', (e) => {
+        localStorage.setItem('study_notes', e.target.value);
+        document.getElementById('notesStatus').textContent = 'Anotação salva';
+        setTimeout(() => {
+            document.getElementById('notesStatus').textContent = 'Salvo automaticamente';
+        }, 2000);
+    });
 });
 
+function clearNotes() {
+    if (confirm('Deseja limpar suas anotações?')) {
+        document.getElementById('quickNotes').value = '';
+        localStorage.removeItem('study_notes');
+    }
+}
+
+// Preenche o campo apenas com a hora calculada
 function setQuickMinutes(minutes) {
     const now = new Date();
     now.setMinutes(now.getMinutes() + minutes);
 
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const dd = String(now.getDate()).padStart(2, '0');
-    
     const hh = String(now.getHours()).padStart(2, '0');
     const min = String(now.getMinutes()).padStart(2, '0');
     const ss = String(now.getSeconds()).padStart(2, '0');
 
-    document.getElementById('targetDate').value = `${yyyy}-${mm}-${dd}`;
-    document.getElementById('targetHour').value = `${hh}:${min}:${ss}`;
+    document.getElementById('targetTimeOnly').value = `${hh}:${min}:${ss}`;
 }
 
 function initAudio() {
@@ -57,17 +78,25 @@ document.getElementById('goalForm').addEventListener('submit', function(e) {
     initAudio();
 
     const titleInput = document.getElementById('title');
-    const categoryInput = document.getElementById('category');
-    const dateInput = document.getElementById('targetDate').value;
-    const hourInput = document.getElementById('targetHour').value;
+    const subjectInput = document.getElementById('subject');
+    const timeOnlyInput = document.getElementById('targetTimeOnly').value;
 
-    const targetTimestamp = new Date(`${dateInput}T${hourInput}`).getTime();
+    const now = new Date();
+    const [hours, minutes, seconds] = timeOnlyInput.split(':').map(Number);
+
+    const targetDate = new Date();
+    targetDate.setHours(hours, minutes, seconds || 0, 0);
+
+    // Se o horário escolhido já passou hoje, assume que é para o dia seguinte
+    if (targetDate.getTime() <= now.getTime()) {
+        targetDate.setDate(targetDate.getDate() + 1);
+    }
 
     const newGoal = {
         id: Date.now().toString(),
         title: titleInput.value,
-        category: categoryInput.value,
-        targetTime: targetTimestamp,
+        subject: subjectInput.value,
+        targetTime: targetDate.getTime(),
         alarmPlayed: false
     };
 
@@ -76,11 +105,11 @@ document.getElementById('goalForm').addEventListener('submit', function(e) {
     renderGoals();
 
     titleInput.value = '';
-    document.getElementById('targetHour').value = '';
+    document.getElementById('targetTimeOnly').value = '';
 });
 
 function saveGoals() {
-    localStorage.setItem('goals_db', JSON.stringify(goals));
+    localStorage.setItem('study_goals_db', JSON.stringify(goals));
 }
 
 function deleteGoal(id) {
@@ -98,7 +127,12 @@ function openFullscreen(id) {
     if (!goal) return;
 
     document.getElementById('fullscreenTitle').textContent = goal.title;
-    document.getElementById('fullscreenCategory').textContent = goal.category;
+    document.getElementById('fullscreenSubject').textContent = goal.subject;
+
+    // Seleciona uma frase motivacional aleatória
+    const randomQuote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+    document.getElementById('quoteBox').textContent = randomQuote;
+
     document.getElementById('fullscreenModal').classList.add('active');
 
     updateTimers();
@@ -133,7 +167,7 @@ function updateTimers() {
 
         let formattedTime = "";
         if (diff <= 0) {
-            formattedTime = "TEMPO ESGOTADO!";
+            formattedTime = "SESSÃO CONCLUÍDA!";
         } else {
             const hours = Math.floor(diff / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -163,24 +197,24 @@ function updateTimers() {
 
             fsTimer.textContent = formattedTime;
             if (diff <= 0) {
-                fsStatus.textContent = "PRAZO FINALIZADO";
+                fsStatus.textContent = "TEMPO FINALIZADO";
                 fsTimer.style.color = "#ff0000";
             } else {
-                fsStatus.textContent = "CONTAGEM REGRESSIVA";
+                fsStatus.textContent = "MODO FOCO ATIVO";
                 fsTimer.style.color = "#ff2222";
             }
         }
     });
 
-    document.getElementById('statActive').textContent = `Ativas: ${activeCount}`;
-    document.getElementById('statExpired').textContent = `Esgotadas: ${expiredCount}`;
+    document.getElementById('statActive').textContent = `Em Foco: ${activeCount}`;
+    document.getElementById('statCompleted').textContent = `Concluídas: ${expiredCount}`;
 }
 
 function renderGoals() {
     const container = document.getElementById('goalsList');
 
     if (goals.length === 0) {
-        container.innerHTML = '<p class="empty-msg">Nenhuma meta cadastrada no momento.</p>';
+        container.innerHTML = '<p class="empty-msg">Nenhuma sessão de estudo ativa no momento.</p>';
         updateTimers();
         return;
     }
@@ -190,7 +224,7 @@ function renderGoals() {
             <div class="goal-info">
                 <div class="goal-header-row">
                     <span class="goal-title">${escapeHtml(goal.title)}</span>
-                    <span class="badge">${escapeHtml(goal.category)}</span>
+                    <span class="badge">${escapeHtml(goal.subject)}</span>
                 </div>
                 <span class="goal-timer" id="timer-${goal.id}">--:--:--</span>
             </div>
