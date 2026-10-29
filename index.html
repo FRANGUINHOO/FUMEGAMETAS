@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciador de Metas</title>
+    <title>FumegaMetas</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,16 +11,28 @@
 
     <div class="container">
         <header>
-            <h1>GERENCIADOR DE METAS</h1>
-            <p class="subtitle">Acompanhamento em tempo real</p>
+            <h1>FUMEGAMETAS</h1>
+            <p class="subtitle">Acompanhamento em Tempo Real</p>
         </header>
 
         <section class="card form-card">
             <h2>Criar Nova Meta</h2>
             <form id="goalForm">
-                <div class="input-group">
-                    <label for="title">Título da Meta</label>
-                    <input type="text" id="title" placeholder="Ex: Finalizar projeto" required>
+                <div class="form-row">
+                    <div class="input-group flex-2">
+                        <label for="title">Título da Meta</label>
+                        <input type="text" id="title" placeholder="Ex: Finalizar projeto" required>
+                    </div>
+
+                    <div class="input-group flex-1">
+                        <label for="category">Categoria</label>
+                        <select id="category">
+                            <option value="Trabalho">Trabalho</option>
+                            <option value="Estudos">Estudos</option>
+                            <option value="Saúde">Saúde</option>
+                            <option value="Pessoal">Pessoal</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="input-group">
@@ -33,11 +45,29 @@
         </section>
 
         <section class="card list-card">
-            <h2>Minhas Metas</h2>
+            <div class="list-header">
+                <h2>Minhas Metas</h2>
+                <div class="stats-bar">
+                    <span id="statActive">Ativas: 0</span>
+                    <span id="statExpired">Esgotadas: 0</span>
+                </div>
+            </div>
+            
             <div id="goalsList" class="goals-container">
                 <p class="empty-msg">Nenhuma meta cadastrada no momento.</p>
             </div>
         </section>
+    </div>
+
+    <!-- Modal para Exibição em Tela Cheia -->
+    <div id="fullscreenModal" class="fullscreen-modal">
+        <div class="fullscreen-content">
+            <button class="close-modal-btn" onclick="closeFullscreen()">FECHAR [X]</button>
+            <h2 id="fullscreenTitle">TÍTULO DA META</h2>
+            <span id="fullscreenCategory" class="badge">CATEGORIA</span>
+            <div id="fullscreenTimer" class="fullscreen-timer">00:00:00</div>
+            <p id="fullscreenStatus" class="fullscreen-status">EM ANDAMENTO</p>
+        </div>
     </div>
 
     <script src="script.js"></script>
