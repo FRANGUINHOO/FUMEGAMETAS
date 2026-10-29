@@ -21,7 +21,7 @@
                 <div class="form-row">
                     <div class="input-group flex-2">
                         <label for="title">Título da Meta</label>
-                        <input type="text" id="title" placeholder="Ex: Finalizar projeto" required>
+                        <input type="text" id="title" placeholder="Ex: Estudar para a prova" required>
                     </div>
 
                     <div class="input-group flex-1">
@@ -34,10 +34,29 @@
                         </select>
                     </div>
                 </div>
-                
+
+                <!-- Atalho de Tempo Rápido -->
                 <div class="input-group">
-                    <label for="targetTime">Data e Hora de Validade</label>
-                    <input type="datetime-local" id="targetTime" required step="1">
+                    <label>Tempo Rápido (ou escolha a hora exata abaixo):</label>
+                    <div class="quick-buttons">
+                        <button type="button" class="btn-quick" onclick="setQuickMinutes(15)">+15 min</button>
+                        <button type="button" class="btn-quick" onclick="setQuickMinutes(30)">+30 min</button>
+                        <button type="button" class="btn-quick" onclick="setQuickMinutes(60)">+1 Hora</button>
+                        <button type="button" class="btn-quick" onclick="setQuickMinutes(120)">+2 Horas</button>
+                    </div>
+                </div>
+
+                <!-- Campos Separados de Data e Hora -->
+                <div class="form-row">
+                    <div class="input-group flex-1">
+                        <label for="targetDate">Data do Prazo</label>
+                        <input type="date" id="targetDate" required>
+                    </div>
+
+                    <div class="input-group flex-1">
+                        <label for="targetHour">Hora do Prazo</label>
+                        <input type="time" id="targetHour" step="1" required>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Adicionar Meta</button>
