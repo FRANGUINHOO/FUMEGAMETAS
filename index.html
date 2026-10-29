@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Metas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="overlay"></div>
+
+    <div class="container">
+        <header>
+            <h1>GERENCIADOR DE METAS</h1>
+            <p class="subtitle">Acompanhamento em tempo real</p>
+        </header>
+
+        <section class="card form-card">
+            <h2>Criar Nova Meta</h2>
+            <form id="goalForm">
+                <div class="input-group">
+                    <label for="title">Título da Meta</label>
+                    <input type="text" id="title" placeholder="Ex: Finalizar projeto" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="targetTime">Data e Hora de Validade</label>
+                    <input type="datetime-local" id="targetTime" required step="1">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Adicionar Meta</button>
+            </form>
+        </section>
+
+        <section class="card list-card">
+            <h2>Minhas Metas</h2>
+            <div id="goalsList" class="goals-container">
+                <p class="empty-msg">Nenhuma meta cadastrada no momento.</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
